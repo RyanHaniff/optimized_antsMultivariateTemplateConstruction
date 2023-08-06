@@ -1,0 +1,2 @@
+/home/ryanhaniff/Documents/GitHub/Work/optimized_antsMultivariateTemplateConstruction/scans/d8_0001_04.denoise.nii.gz
+/home/ryanhaniff/Documents/GitHub/Work/optimized_antsMultivariateTemplateConstruction/scans/d8_0002_03.denoise.nii.gz

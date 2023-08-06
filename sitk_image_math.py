@@ -145,6 +145,11 @@ if __name__ == "__main__":
                     sitk.sitkLinear
                 )
             array = sitk.GetArrayViewFromImage(img)
+
+            # a = np.array([[1, 2], [3, 4]])
+            # np.mean(a)
+            # Output: 2.5 
+            # reason (1+2+3+4)/4
             if opts.normalize: # divide the image values by its mean
                 concat_array[i,:] = array.flatten()/array.mean()
             else:
@@ -228,3 +233,9 @@ if __name__ == "__main__":
         # Copy the image metadata from an the first extracted slice of the first image
         average_img.CopyInformation(sitk.Extract(inputRefImage, inputRefImage.GetSize()[0:3] + tuple([0]), directionCollapseToStrategy=sitk.ExtractImageFilter.DIRECTIONCOLLAPSETOSUBMATRIX))
         sitk.WriteImage(average_img, opts.output)
+
+def calculate_mean(array):
+    pass
+    # calculate the sum of each array first 
+    # keep track of the each size of array
+

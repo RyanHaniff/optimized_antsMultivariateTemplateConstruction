@@ -256,7 +256,7 @@ if __name__ == "__main__":
 
     # end time
     end = time.time()
-    print("Time to run: ", end - start, "ms")
+    print("Time to run: ", end - start, "s")
 
 
 def calculate_mean(array):

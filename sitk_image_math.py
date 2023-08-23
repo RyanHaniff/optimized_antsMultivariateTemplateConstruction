@@ -37,6 +37,9 @@ if __name__ == "__main__":
                         """)
     opts = parser.parse_args()
 
+    # start timer
+    start = time.time()
+
     inputRefImage = sitk.ReadImage(opts.file_list[0])
 
     if inputRefImage.GetDimension() == 4:
@@ -250,6 +253,11 @@ if __name__ == "__main__":
         # Copy the image metadata from an the first extracted slice of the first image
         average_img.CopyInformation(sitk.Extract(inputRefImage, inputRefImage.GetSize()[0:3] + tuple([0]), directionCollapseToStrategy=sitk.ExtractImageFilter.DIRECTIONCOLLAPSETOSUBMATRIX))
         sitk.WriteImage(average_img, opts.output)
+
+    # end time
+    end = time.time()
+    print("Time to run: ", end - start, "ms")
+
 
 def calculate_mean(array):
 

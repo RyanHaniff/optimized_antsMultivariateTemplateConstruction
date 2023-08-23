@@ -1,3 +1,8 @@
 output/
 logs/
 scans/
+mean_test.py
+input.txt
+output_file.nii.gz
+output_file_2.nii.gz
+input.txt

@@ -3,6 +3,7 @@ import argparse
 import os
 import numpy as np
 import SimpleITK as sitk
+import time
 
 
 if __name__ == "__main__":
@@ -126,7 +127,8 @@ if __name__ == "__main__":
 
         # Create empty array to stick data in
         # Need to reverse the dimension order b/c numpy and ITK are backwards
-        concat_array = np.empty(shape=[len(opts.file_list), np.prod(averageRef.GetSize())])
+        # concat_array = np.empty(shape=[len(opts.file_list), np.prod(averageRef.GetSize())])
+        concat_array = np.empty(shape=[1, np.prod(averageRef.GetSize())])
         shape = averageRef.GetSize()[::-1]
 
         for i,file in enumerate(opts.file_list):
@@ -151,7 +153,18 @@ if __name__ == "__main__":
             # Output: 2.5 
             # reason (1+2+3+4)/4
             if opts.normalize: # divide the image values by its mean
-                concat_array[i,:] = array.flatten()/array.mean()
+                # for the value at index i
+                # flatten and diving by average and assign it to i'th row
+                # concat_array[i,:] = array.flatten()/array.mean()
+
+                normalized_array = array.flatten()/array.mean()
+                if concat_array.size != 0: # if not empty
+                    print("concat_array is not empty")
+                    concat_array[0,:] = np.mean(np.array([concat_array[0], normalized_array]), axis=0)
+                else: # if concat_array is empty
+                    print("concat_array is empty")
+                    concat_array[0,:] =normalized_array
+
             else:
                 concat_array[i,:] = array.flatten()
 
@@ -183,14 +196,18 @@ if __name__ == "__main__":
             img = sitk.ReadImage(file)
             array = sitk.GetArrayViewFromImage(img)
             if opts.normalize: # divide the image values by its mean
-                concat_array[i,:] = array.flatten()/array.mean()
+                concat_array[i,:] = array.flatten()/array.mean() 
             else:
                 concat_array[i,:] = array.flatten()
 
     if opts.verbose:
         print(f"Computing output {opts.method}")
     if opts.method == 'mean':
-        average = np.mean(concat_array, axis=0)
+        # lets see how the array looks
+        print(concat_array)
+        # axis=0 gets average column wise
+        average = concat_array
+        # average = np.mean(concat_array, axis=0) 
     elif opts.method == 'median':
         average = np.median(concat_array, axis=0)
     elif opts.method == 'trimmed_mean':
@@ -235,6 +252,11 @@ if __name__ == "__main__":
         sitk.WriteImage(average_img, opts.output)
 
 def calculate_mean(array):
+
+    start = time.time()
+    end = time.time()
+    diff = end - start
+
     pass
     # calculate the sum of each array first 
     # keep track of the each size of array

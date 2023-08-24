@@ -163,8 +163,8 @@ if __name__ == "__main__":
                 )
             array = sitk.GetArrayViewFromImage(img)
 
-            print("The count is ", count)
-            np.set_printoptions(threshold=np.inf)
+            # print("The count is ", count)
+            # np.set_printoptions(threshold=2000)
 
             if opts.normalize: # divide the image values by its mean
                 # for the value at index i
@@ -176,19 +176,19 @@ if __name__ == "__main__":
                     count += 1
                 else:
                     mean = np.mean(np.vstack((mean, normalized_array)), axis=0)
-                    count += 1
+                    # count += 1
 
             else:
                 # concat_array[i,:] = array.flatten()
                 flattened = array.flatten()
                 if count == 0:
                     mean = flattened
-                    pprint.pprint(mean)
+                    # pprint.pprint(mean)
                     count += 1
                 else:
                     mean = np.mean(np.vstack((mean, flattened)), axis=0)
-                    pprint.pprint(mean)
-                    count += 1
+                    # pprint.pprint(mean)
+                    # count += 1
 
 
     elif image_type == 'timeseries':

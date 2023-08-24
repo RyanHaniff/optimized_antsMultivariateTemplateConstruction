@@ -36,6 +36,7 @@ if __name__ == "__main__":
                         Be verbose
                         """)
     opts = parser.parse_args()
+    print(opts.method)
 
     # start timer
     start = time.time()
@@ -151,19 +152,15 @@ if __name__ == "__main__":
                 )
             array = sitk.GetArrayViewFromImage(img)
 
-            # a = np.array([[1, 2], [3, 4]])
-            # np.mean(a)
-            # Output: 2.5 
-            # reason (1+2+3+4)/4
             if opts.normalize: # divide the image values by its mean
                 # for the value at index i
-                # flatten and diving by average and assign it to i'th row
+                # flatten and divide by average and assign it to i'th row
                 # concat_array[i,:] = array.flatten()/array.mean()
-
                 normalized_array = array.flatten()/array.mean()
                 if concat_array.size != 0: # if not empty
                     # print("concat_array is not empty")
-                    concat_array[0,:] = np.mean(np.array([concat_array[0], normalized_array]), axis=0)
+                    concat_array[0,:] = np.mean([concat_array[0], normalized_array], axis=0)
+                # need to check if i need if and else
                 else: # if concat_array is empty
                     # print("concat_array is empty")
                     concat_array[0,:] =normalized_array
@@ -255,15 +252,3 @@ if __name__ == "__main__":
     # end time
     end = time.time()
     print("Time to run: ", end - start, "s")
-
-
-def calculate_mean(array):
-
-    start = time.time()
-    end = time.time()
-    diff = end - start
-
-    pass
-    # calculate the sum of each array first 
-    # keep track of the each size of array
-

@@ -226,10 +226,7 @@ if __name__ == "__main__":
     if opts.verbose:
         print(f"Computing output {opts.method}")
     if opts.method == 'mean':
-        # average = mean
-        
-        average = concat_array
-
+        average = mean
         # axis=0 gets average column wise
         # average = np.mean(concat_array, axis=0) 
     elif opts.method == 'median':

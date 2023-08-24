@@ -4,6 +4,7 @@ import os
 import numpy as np
 import SimpleITK as sitk
 import time
+import pprint
 
 def calculate_mean(initial_mean, array):
     if initial_mean is not None:
@@ -143,7 +144,8 @@ if __name__ == "__main__":
         shape = averageRef.GetSize()[::-1]
 
         mean = None
-
+        count = 0
+        
         for i,file in enumerate(opts.file_list):
             if not os.path.isfile(file):
                 raise ValueError("The provided file {file} does not exist.".format(file=file))
@@ -161,31 +163,33 @@ if __name__ == "__main__":
                 )
             array = sitk.GetArrayViewFromImage(img)
 
+            print("The count is ", count)
+            np.set_printoptions(threshold=np.inf)
+
             if opts.normalize: # divide the image values by its mean
                 # for the value at index i
                 # flatten and divide by average and assign it to i'th row
                 # concat_array[i,:] = array.flatten()/array.mean()
                 normalized_array = array.flatten()/array.mean()
-
-                # -----
-                # mean = calculate_mean(mean, normalized_array)
-                # -----
-
-                if concat_array.size != 0: # if not empty
-                    # print("concat_array is not empty")
-                    concat_array[0, :] = np.mean([concat_array[0], normalized_array], axis=0)
-                # need to check if i need if and else
-                else: # if concat_array is empty
-                    # print("concat_array is empty")
-                    concat_array[0, :] = normalized_array
+                if count == 0:
+                    mean = normalized_array
+                    count += 1
+                else:
+                    mean = np.mean(np.vstack((mean, normalized_array)), axis=0)
+                    count += 1
 
             else:
                 # concat_array[i,:] = array.flatten()
                 flattened = array.flatten()
-                concat_array[0, :] = np.mean([concat_array[0], flattened], axis=0)
-                # ------
-                # mean = calculate_mean(mean, flattened)
-                # ------
+                if count == 0:
+                    mean = flattened
+                    pprint.pprint(mean)
+                    count += 1
+                else:
+                    mean = np.mean(np.vstack((mean, flattened)), axis=0)
+                    pprint.pprint(mean)
+                    count += 1
+
 
     elif image_type == 'timeseries':
         # Assume all timeseries inputs are in the same space

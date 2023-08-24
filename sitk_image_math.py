@@ -166,20 +166,26 @@ if __name__ == "__main__":
                 # flatten and divide by average and assign it to i'th row
                 # concat_array[i,:] = array.flatten()/array.mean()
                 normalized_array = array.flatten()/array.mean()
-                mean = calculate_mean(mean, normalized_array)
-                # if concat_array.size != 0: # if not empty
-                #     # print("concat_array is not empty")
-                #     concat_array[0, :] = np.mean([concat_array[0], normalized_array], axis=0)
-                # # need to check if i need if and else
-                # else: # if concat_array is empty
-                #     # print("concat_array is empty")
-                #     concat_array[0, :] = normalized_array
+
+                # -----
+                # mean = calculate_mean(mean, normalized_array)
+                # -----
+
+                if concat_array.size != 0: # if not empty
+                    # print("concat_array is not empty")
+                    concat_array[0, :] = np.mean([concat_array[0], normalized_array], axis=0)
+                # need to check if i need if and else
+                else: # if concat_array is empty
+                    # print("concat_array is empty")
+                    concat_array[0, :] = normalized_array
 
             else:
                 # concat_array[i,:] = array.flatten()
                 flattened = array.flatten()
-                # concat_array[0, :] = np.mean([concat_array[0], flattened], axis=0)
-                mean = calculate_mean(mean, flattened)
+                concat_array[0, :] = np.mean([concat_array[0], flattened], axis=0)
+                # ------
+                # mean = calculate_mean(mean, flattened)
+                # ------
 
     elif image_type == 'timeseries':
         # Assume all timeseries inputs are in the same space
@@ -216,7 +222,10 @@ if __name__ == "__main__":
     if opts.verbose:
         print(f"Computing output {opts.method}")
     if opts.method == 'mean':
-        average = mean
+        # average = mean
+        
+        average = concat_array
+
         # axis=0 gets average column wise
         # average = np.mean(concat_array, axis=0) 
     elif opts.method == 'median':

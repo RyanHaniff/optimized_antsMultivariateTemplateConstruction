@@ -159,14 +159,16 @@ if __name__ == "__main__":
                 normalized_array = array.flatten()/array.mean()
                 if concat_array.size != 0: # if not empty
                     # print("concat_array is not empty")
-                    concat_array[0,:] = np.mean([concat_array[0], normalized_array], axis=0)
+                    concat_array[0, :] = np.mean([concat_array[0], normalized_array], axis=0)
                 # need to check if i need if and else
                 else: # if concat_array is empty
                     # print("concat_array is empty")
-                    concat_array[0,:] =normalized_array
+                    concat_array[0, :] =normalized_array
 
             else:
-                concat_array[i,:] = array.flatten()
+                # concat_array[i,:] = array.flatten()
+                flattened = array.flatten()
+                concat_array[0, :] = np.mean([concat_array[0], normalized_array], axis=0)
 
     elif image_type == 'timeseries':
         # Assume all timeseries inputs are in the same space

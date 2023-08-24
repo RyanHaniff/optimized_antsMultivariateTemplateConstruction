@@ -171,13 +171,15 @@ if __name__ == "__main__":
                 # mean = calculate_mean(mean, normalized_array)
                 # -----
 
-                if concat_array.size != 0: # if not empty
-                    # print("concat_array is not empty")
-                    concat_array[0, :] = np.mean([concat_array[0], normalized_array], axis=0)
-                # need to check if i need if and else
-                else: # if concat_array is empty
-                    # print("concat_array is empty")
-                    concat_array[0, :] = normalized_array
+                mean = np.sum([mean, normalized_array],axis=0)
+
+                # if concat_array.size != 0: # if not empty
+                #     # print("concat_array is not empty")
+                #     concat_array[0, :] = np.mean([concat_array[0], normalized_array], axis=0)
+                # # need to check if i need if and else
+                # else: # if concat_array is empty
+                #     # print("concat_array is empty")
+                #     concat_array[0, :] = normalized_array
 
             else:
                 # concat_array[i,:] = array.flatten()
@@ -224,7 +226,7 @@ if __name__ == "__main__":
     if opts.method == 'mean':
         # average = mean
         
-        average = concat_array
+        average = np.mean(mean, axis=0)
 
         # axis=0 gets average column wise
         # average = np.mean(concat_array, axis=0) 

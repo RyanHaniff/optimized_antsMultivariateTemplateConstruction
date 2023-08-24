@@ -5,6 +5,13 @@ import numpy as np
 import SimpleITK as sitk
 import time
 
+def calculate_mean(initial_mean, array):
+    if initial_mean is not None:
+        new_mean = np.mean([initial_mean, array], axis=0)
+    else:
+        new_mean = np.mean([array], axis=0)
+    return new_mean
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -135,7 +142,7 @@ if __name__ == "__main__":
         concat_array = np.empty(shape=[1, np.prod(averageRef.GetSize())])
         shape = averageRef.GetSize()[::-1]
 
-        mean = []
+        mean = None
 
         for i,file in enumerate(opts.file_list):
             if not os.path.isfile(file):
@@ -159,19 +166,20 @@ if __name__ == "__main__":
                 # flatten and divide by average and assign it to i'th row
                 # concat_array[i,:] = array.flatten()/array.mean()
                 normalized_array = array.flatten()/array.mean()
-                mean = np.mean
-                if concat_array.size != 0: # if not empty
-                    # print("concat_array is not empty")
-                    concat_array[0, :] = np.mean([concat_array[0], normalized_array], axis=0)
-                # need to check if i need if and else
-                else: # if concat_array is empty
-                    # print("concat_array is empty")
-                    concat_array[0, :] =normalized_array
+                mean = calculate_mean(mean, normalized_array)
+                # if concat_array.size != 0: # if not empty
+                #     # print("concat_array is not empty")
+                #     concat_array[0, :] = np.mean([concat_array[0], normalized_array], axis=0)
+                # # need to check if i need if and else
+                # else: # if concat_array is empty
+                #     # print("concat_array is empty")
+                #     concat_array[0, :] = normalized_array
 
             else:
                 # concat_array[i,:] = array.flatten()
                 flattened = array.flatten()
-                concat_array[0, :] = np.mean([concat_array[0], flattened], axis=0)
+                # concat_array[0, :] = np.mean([concat_array[0], flattened], axis=0)
+                mean = calculate_mean(mean, flattened)
 
     elif image_type == 'timeseries':
         # Assume all timeseries inputs are in the same space
@@ -208,7 +216,7 @@ if __name__ == "__main__":
     if opts.verbose:
         print(f"Computing output {opts.method}")
     if opts.method == 'mean':
-        average = concat_array
+        average = mean
         # axis=0 gets average column wise
         # average = np.mean(concat_array, axis=0) 
     elif opts.method == 'median':
@@ -257,3 +265,5 @@ if __name__ == "__main__":
     # end time
     end = time.time()
     print("Time to run: ", end - start, "s")
+
+

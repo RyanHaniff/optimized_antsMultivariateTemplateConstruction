@@ -162,10 +162,10 @@ if __name__ == "__main__":
 
                 normalized_array = array.flatten()/array.mean()
                 if concat_array.size != 0: # if not empty
-                    print("concat_array is not empty")
+                    # print("concat_array is not empty")
                     concat_array[0,:] = np.mean(np.array([concat_array[0], normalized_array]), axis=0)
                 else: # if concat_array is empty
-                    print("concat_array is empty")
+                    # print("concat_array is empty")
                     concat_array[0,:] =normalized_array
 
             else:
@@ -206,10 +206,8 @@ if __name__ == "__main__":
     if opts.verbose:
         print(f"Computing output {opts.method}")
     if opts.method == 'mean':
-        # lets see how the array looks
-        print(concat_array)
-        # axis=0 gets average column wise
         average = concat_array
+        # axis=0 gets average column wise
         # average = np.mean(concat_array, axis=0) 
     elif opts.method == 'median':
         average = np.median(concat_array, axis=0)

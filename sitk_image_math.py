@@ -135,6 +135,8 @@ if __name__ == "__main__":
         concat_array = np.empty(shape=[1, np.prod(averageRef.GetSize())])
         shape = averageRef.GetSize()[::-1]
 
+        mean = []
+
         for i,file in enumerate(opts.file_list):
             if not os.path.isfile(file):
                 raise ValueError("The provided file {file} does not exist.".format(file=file))
@@ -157,6 +159,7 @@ if __name__ == "__main__":
                 # flatten and divide by average and assign it to i'th row
                 # concat_array[i,:] = array.flatten()/array.mean()
                 normalized_array = array.flatten()/array.mean()
+                mean = np.mean
                 if concat_array.size != 0: # if not empty
                     # print("concat_array is not empty")
                     concat_array[0, :] = np.mean([concat_array[0], normalized_array], axis=0)
@@ -168,7 +171,7 @@ if __name__ == "__main__":
             else:
                 # concat_array[i,:] = array.flatten()
                 flattened = array.flatten()
-                concat_array[0, :] = np.mean([concat_array[0], normalized_array], axis=0)
+                concat_array[0, :] = np.mean([concat_array[0], flattened], axis=0)
 
     elif image_type == 'timeseries':
         # Assume all timeseries inputs are in the same space

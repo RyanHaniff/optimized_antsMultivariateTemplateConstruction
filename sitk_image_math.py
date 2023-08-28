@@ -136,12 +136,13 @@ if __name__ == "__main__":
 
         # welford algo setup
         # set the count
-        count = 0
+        # count = 0
         # setting up array of zeroes 
-        sum = np.zeros(np.prod(averageRef.GetSize()))
-        mean = np.zeros(np.prod(averageRef.GetSize()))
-        squared_diff = np.zeros(np.prod(averageRef.GetSize()))
+        # sum = np.zeros(np.prod(averageRef.GetSize()))
+        # mean = np.zeros(np.prod(averageRef.GetSize()))
+        # squared_diff = np.zeros(np.prod(averageRef.GetSize()))
 
+        # using welford library
         w = Welford()
 
         for i,file in enumerate(opts.file_list):

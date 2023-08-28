@@ -165,9 +165,9 @@ if __name__ == "__main__":
             if opts.normalize: # divide the image values by its mean
                 # concat_array[i,:] = array.flatten()/array.mean()
                 array = array.flatten()/array.mean()
+                w.add(array)
             else:
                 # concat_array[i,:] = array.flatten()
-
                 w.add(array.flatten())
 
                 # https://www.geeksforgeeks.org/expression-for-mean-and-variance-in-a-running-stream/
@@ -223,7 +223,6 @@ if __name__ == "__main__":
         print(f"Computing output {opts.method}")
     if opts.method == 'mean':
         # average = np.mean(concat_array, axis=0)
-
         # calculate mean using welford library
         average = w.mean
     elif opts.method == 'median':

@@ -4,8 +4,6 @@ import os
 import numpy as np
 import SimpleITK as sitk
 import time
-from welford import Welford
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -142,8 +140,6 @@ if __name__ == "__main__":
         mean = np.zeros(np.prod(averageRef.GetSize()))
         squared_diff = np.zeros(np.prod(averageRef.GetSize()))
 
-        w = Welford()
-
         for i,file in enumerate(opts.file_list):
             if not os.path.isfile(file):
                 raise ValueError("The provided file {file} does not exist.".format(file=file))
@@ -220,9 +216,7 @@ if __name__ == "__main__":
         print(f"Computing output {opts.method}")
     if opts.method == 'mean':
         # average = np.mean(concat_array, axis=0)
-
-        # calculate mean using welford library
-        average = w.mean
+        average = mean
     elif opts.method == 'median':
         average = np.median(concat_array, axis=0)
     elif opts.method == 'trimmed_mean':

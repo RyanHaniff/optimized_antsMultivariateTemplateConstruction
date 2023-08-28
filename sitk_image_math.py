@@ -167,11 +167,13 @@ if __name__ == "__main__":
             else:
                 # concat_array[i,:] = array.flatten()
 
+                w.add(array.flatten())
+
                 # https://www.geeksforgeeks.org/expression-for-mean-and-variance-in-a-running-stream/
-                count += 1
-                print("Welford image: ", count)
-                sum += array.flatten() 
-                mean += sum / count
+                # count += 1
+                # print("Welford image: ", count)
+                # sum += array.flatten() 
+                # mean += sum / count
 
                 # pseudocode for welford algo (https://jonisalonen.com/2013/deriving-welfords-method-for-computing-variance/)
                 # print("Welford image: ", count)

@@ -61,10 +61,11 @@ computational load
 ## Requirements
 
 This pipeline is primarity written in `bash`, and requires [ANTs](https://github.com/ANTsX/ANTs)
-for the primary commands, `antsRegistration_affine_SyN.sh` and `ants_generate_iterations.py`
-from [minc-toolkit-extras](https://github.com/CoBrALab/minc-toolkit-extras/) for the
-optimized registration generation, and [qbatch](https://github.com/pipitone/qbatch)
+for the primary commands, and [qbatch](https://github.com/pipitone/qbatch)
 for running commands locally or with cluster integration.
+
+A depdenency submodule of [minc-toolkit-extras](https://github.com/cobralab/minc-toolkit-extras)
+is automatically included with appropriate versioning via a submodule.
 
 (Optional) advanced averaging options are provided by a python scripts which require
 [SimpleITK](https://simpleitk.org/), [NumPy](https://numpy.org/), [SciPy](https://scipy.org/)
@@ -88,14 +89,25 @@ The following are features missing compared to `antsMultivariateTemplateConstruc
 - 2D
 - 4D
 
+## Installation
+
+Provided you have installed ANTs (via conda, binaries, or source), and qbatch (via pip)
+
+```
+$ git clone --recursive https://github.com/CoBrALab/optimized_antsMultivariateTemplateConstruction.git
+```
+
+You can add this directory to your `PATH` or refer to the scritps from any working directory, it will
+properly find the rest of its dependent scripts.
+
 ## Basic usage
 
 Example help, always check `./modelbuild.sh --help` in case this document has not
 been updated
 
-```
+```bash
 A qbatch enabled, optimal registration pyramid based re-implementaiton of antsMultivariateTemplateConstruction2.sh
-Usage: ./modelbuild.sh [-h|--help] [--output-dir <arg>] [--gradient-step <arg>] [--starting-target <arg>] [--starting-target-mask <arg>] [--(no-)com-initialize] [--starting-average-resolution <arg>] [--iterations <arg>] [--convergence <arg>] [--(no-)float] [--(no-)fast] [--average-type <AVERAGE>] [--average-prog <PROG>] [--(no-)average-norm] [--(no-)scale-affines] [--(no-)rigid-update] [--sharpen-type <SHARPEN>] [--masks <arg>] [--(no-)mask-extract] [--stages <arg>] [--(no-)reuse-affines] [--walltime-short <arg>] [--walltime-linear <arg>] [--walltime-nonlinear <arg>] [--jobname-prefix <arg>] [--job-predepend <arg>] [--(no-)skip-file-checks] [--(no-)block] [--(no-)debug] [--(no-)dry-run] <inputs-1> [<inputs-2>] ... [<inputs-n>] ...
+Usage: ./modelbuild.sh [-h|--help] [--output-dir <arg>] [--gradient-step <arg>] [--starting-target <arg>] [--starting-target-mask <arg>] [--(no-)com-initialize] [--starting-average-resolution <arg>] [--iterations <arg>] [--convergence <arg>] [--syn-shrink-factors <arg>] [--syn-smoothing-sigmas <arg>] [--syn-convergence <arg>] [--syn-control <arg>] [--linear-shrink-factors <arg>] [--linear-smoothing-sigmas <arg>] [--linear-convergence <arg>] [--(no-)float] [--(no-)fast] [--average-type <AVERAGE>] [--average-prog <PROG>] [--(no-)average-norm] [--(no-)nlin-shape-update] [--(no-)affine-shape-update] [--(no-)scale-affines] [--(no-)rigid-update] [--sharpen-type <SHARPEN>] [--masks <arg>] [--(no-)mask-extract] [--mask-merge-threshold <arg>] [--stages <arg>] [--(no-)reuse-affines] [--final-target <arg>] [--final-target-mask <arg>] [--walltime-short <arg>] [--walltime-linear <arg>] [--walltime-nonlinear <arg>] [--jobname-prefix <arg>] [--job-predepend <arg>] [--(no-)skip-file-checks] [--(no-)block] [--(no-)debug] [--(no-)dry-run] <inputs-1> [<inputs-2>] ... [<inputs-n>] ...
         <inputs>: Input text file, one line per input
         -h, --help: Prints help
         --output-dir: Output directory for modelbuild (default: 'output')
@@ -106,19 +118,31 @@ Usage: ./modelbuild.sh [-h|--help] [--output-dir <arg>] [--gradient-step <arg>] 
         --starting-average-resolution: If no starting target is provided, an average is constructed from all inputs, resample average to a target resolution MxNxO before modelbuild (no default)
         --iterations: Number of iterations of model building per stage (default: '4')
         --convergence: Convergence limit during registration calls (default: '1e-7')
+        --syn-shrink-factors: Shrink factors for Non-linear (SyN) stages, provide to override automatic generation, must be provided with sigmas and convergence (no default)
+        --syn-smoothing-sigmas: Smoothing sigmas for Non-linear (SyN) stages, provide to override automatic generation, must be provided with shrinks and convergence (no default)
+        --syn-convergence: Convergence levels for Non-linear (SyN) stages, provide to override automatic generation, must be provided with shrinks and sigmas (no default)
+        --syn-control: Non-linear (SyN) gradient and regularization parameters, not checked for correctness (default: '0.1,3,0')
+        --linear-shrink-factors: Shrink factors for linear stages, provide to override automatic generation, must be provided with sigmas and convergence (no default)
+        --linear-smoothing-sigmas: Smoothing sigmas for linear stages, provide to override automatic generation, must be provided with shrinks and convergence (no default)
+        --linear-convergence: Convergence levels for linear stages, provide to override automatic generation, must be provided with shrinks and sigmas (no default)
         --float, --no-float: Use float instead of double for calculations (reduce memory requirements) (off by default)
         --fast, --no-fast: Run SyN registration with Mattes instead of CC (off by default)
         --average-type: Type of averaging to apply during modelbuild. Can be one of: 'mean', 'median', 'trimmed_mean', 'efficient_trimean' and 'huber' (default: 'mean')
         --average-prog: Software to use for averaging images and transforms
                         python with SimpleITK needed for trimmed_mean, efficient_trimean, and huber. Can be one of: 'ANTs' and 'python' (default: 'ANTs')
         --average-norm, --no-average-norm: Normalize images by their mean before averaging (on by default)
+        --nlin-shape-update, --no-nlin-shape-update: Perform nlin shape update, disable to switch to a forward-only modelbuild (on by default)
+        --affine-shape-update, --no-affine-shape-update: Scale template by inverse of average affine transforms during shape update step (on by default)
         --scale-affines, --no-scale-affines: Apply gradient step scaling factor to average affine during shape update step, requires python with VTK and SimpleITK (off by default)
         --rigid-update, --no-rigid-update: Include rigid component of transform when performing shape update on template (disable if template drifts in translation or orientation) (off by default)
         --sharpen-type: Type of sharpening applied to average during modelbuild. Can be one of: 'none', 'laplacian' and 'unsharp' (default: 'unsharp')
         --masks: File containing mask filenames, one file per line (no default)
         --mask-extract, --no-mask-extract: Use masks to extract images before registration (off by default)
-        --stages: Stages of modelbuild used (comma separated options: 'rigid' 'similarity' 'affine' 'nlin' 'nlin-only'), append a number in brackets 'rigid[n]' to override global iteration setting (default: 'rigid,similarity,affine,nlin')
+        --mask-merge-threshold: Threshold to combine masks during averaging (default: '0.5')
+        --stages: Stages of modelbuild used (comma separated options: 'rigid' 'similarity' 'affine' 'nlin' 'nlin-only','volgenmodel-nlin'), append a number in brackets 'rigid[n]' to override global iteration setting (default: 'rigid,similarity,affine,nlin')
         --reuse-affines, --no-reuse-affines: Reuse affines from previous stage/iteration to initialize next stage (off by default)
+        --final-target: Perform a final registration between the average and final target, used in postprocessing (default: 'none')
+        --final-target-mask: Mask for the final target used in postprocessing (default: 'none')
         --walltime-short: Walltime for short running stages (averaging, resampling) (default: '00:30:00')
         --walltime-linear: Walltime for linear registration stages (default: '0:45:00')
         --walltime-nonlinear: Walltime for nonlinear registration stages (default: '4:30:00')
@@ -128,7 +152,6 @@ Usage: ./modelbuild.sh [-h|--help] [--output-dir <arg>] [--gradient-step <arg>] 
         --block, --no-block: For SGE, PBS and SLURM, blocks execution until jobs are finished. (off by default)
         --debug, --no-debug: Debug mode, print all commands to stdout (off by default)
         --dry-run, --no-dry-run: Dry run, don't run any commands, implies debug (off by default)
-
 ```
 
 Minimal run command, assuming an input text file `inputs.txt` containing one line

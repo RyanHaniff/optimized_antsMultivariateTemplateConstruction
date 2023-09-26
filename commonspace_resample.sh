@@ -247,7 +247,6 @@ set -eE -o functrace
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/helpers.sh"
 
 # Set magic variables for current file, directory, os, etc.
-__dir="$(cd "$(dirname "${BASH_SOURCE[${__b3bp_tmp_source_idx:-0}]}")" && pwd)"
 __file="${__dir}/$(basename "${BASH_SOURCE[${__b3bp_tmp_source_idx:-0}]}")"
 __base="$(basename "${__file}" .sh)"
 # shellcheck disable=SC2034,SC2015
@@ -286,7 +285,7 @@ else
   _arg_prepend_transforms=()
 fi
 
-for file in "${_arg_inputs[@]}" "${_arg_resample_inputs[@]}" "${_arg_prepend_transforms[@]}"; do
+for file in "${_arg_inputs[@]}" "${_arg_resample_inputs[@]}" ${_arg_prepend_transforms[@]+"${_arg_prepend_transforms[@]}"}; do
   if [[ ! -s ${file} ]]; then
     failure "Input file ${file} is non-existent or zero size"
   fi

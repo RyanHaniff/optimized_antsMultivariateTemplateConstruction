@@ -236,7 +236,6 @@ set -eE -o functrace
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/helpers.sh"
 
 # Set magic variables for current file, directory, os, etc.
-__dir="$(cd "$(dirname "${BASH_SOURCE[${__b3bp_tmp_source_idx:-0}]}")" && pwd)"
 __file="${__dir}/$(basename "${BASH_SOURCE[${__b3bp_tmp_source_idx:-0}]}")"
 __base="$(basename "${__file}" .sh)"
 # shellcheck disable=SC2034,SC2015
@@ -286,7 +285,7 @@ IFS=',' read -r -a _arg_jacobian_smooth <<<${_arg_jacobian_smooth}
 # Prefight check for required programs
 for program in qbatch ImageMath \
   ThresholdImage ExtractRegionFromImageByMask \
-  antsApplyTransforms; do
+  antsApplyTransforms parallel; do
 
   if ! command -v ${program} &>/dev/null; then
     failure "Required program ${program} not found!"

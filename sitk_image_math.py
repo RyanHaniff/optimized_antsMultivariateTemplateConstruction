@@ -3,8 +3,6 @@ import argparse
 import os
 import numpy as np
 import SimpleITK as sitk
-import time
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -36,9 +34,6 @@ if __name__ == "__main__":
                         Be verbose
                         """)
     opts = parser.parse_args()
-
-    # start timer
-    start = time.time()
 
     inputRefImage = sitk.ReadImage(opts.file_list[0])
 
@@ -232,7 +227,3 @@ if __name__ == "__main__":
         # Copy the image metadata from an the first extracted slice of the first image
         average_img.CopyInformation(sitk.Extract(inputRefImage, inputRefImage.GetSize()[0:3] + tuple([0]), directionCollapseToStrategy=sitk.ExtractImageFilter.DIRECTIONCOLLAPSETOSUBMATRIX))
         sitk.WriteImage(average_img, opts.output)
-
-    # end time
-    end = time.time()
-    print("Time to run: ", end - start, "s")
